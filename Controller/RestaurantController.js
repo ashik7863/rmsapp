@@ -102,7 +102,7 @@ const UpdateRestaurant = async (req, res) => {
     if (existingRestaurant==0) {
       return res.json({
         status: 404,
-        msg: "Restaurant not found",
+        msg: "Restaurant Not Found",
       });
     }
 
