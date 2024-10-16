@@ -15,6 +15,10 @@ app.use(express.static('public'));
 
 app.use(router);
 
+app.get('/test', (req, res) => {
+    res.send('Hello World3');
+});
+
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "client", "build", "index.html"));
 });
@@ -26,10 +30,6 @@ app.get('*', (req, res) => {
             res.status(500).send('Something went wrong!');
         }
     });
-});
-
-app.get('/test', (req, res) => {
-    res.send('Hello World2');
 });
 
 app.listen(PORT, function () {
