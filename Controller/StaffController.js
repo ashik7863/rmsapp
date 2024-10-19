@@ -50,7 +50,7 @@ const AddStaffMember = async (req, res) => {
     const result = await dbInstance.query(
       `INSERT INTO staff (rst_id,emp_id, name, dob, mobile, gender, email, address, role, salary, bank, acc_no, ifsc, status, picture)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)`,
-      [rst_id,staff_id, name, dob, mobile, gender, email, address, role, salary, bank, acc_no, ifsc, status, picture]
+      [rst_id,staff_id, name, dob, mobile, gender, email, address, role, salary, bank, acc_no, ifsc, 'Active', picture]
     );
 
     if (result.affectedRows > 0) {

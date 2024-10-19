@@ -1,11 +1,11 @@
 const express=require('express');
 
 const {upload,handleMulterError}=require('../Services/FileUtils');
-const {AddRestaurant,UpdateRestaurant,FetchAllRestaurants,DeleteRestaurants}=require('../Controller/RestaurantController');
+const {AddRestaurant,UpdateRestaurant,FetchAllRestaurants,DeleteRestaurants,FetchCustomer, FetchRestaurantById}=require('../Controller/RestaurantController');
 const {AddMenu,FetchAllMenu,DeleteMenu}=require('../Controller/MenuController');
 const {AddMenuItem,FetchAllMenuItem,DeleteMenuItem}=require('../Controller/MenuItemController');
 const {AddStaffMember,FetchAllStaff,DeleteStaff}=require('../Controller/StaffController');
-const {AddTable,FetchAllTable,DeleteTable,FetchTableByStaff}=require('../Controller/TableController');
+const {AddTable,FetchAllTable,DeleteTable,FetchTableByStaff, ServedTable}=require('../Controller/TableController');
 const {Login,ForgotPassword, OtpVerify, ResetPassword, LoginStaff}=require('../Controller/LoginController');
 const {CreateOrder,PaymentSuccess,FetchOrderByMobile, FetchOrderByRestaurant}=require('../Controller/OrderController');
 const { SuperAdminCount ,AdminCount} = require('../Controller/CountController');
@@ -31,6 +31,8 @@ router.post('/api/add-restaurant',AddRestaurant);
 router.get('/api/fetch-restaurant',FetchAllRestaurants);
 router.post('/api/update-restaurant',UpdateRestaurant);
 router.post('/api/delete-restaurant',DeleteRestaurants);
+router.get('/api/fetch-customer/:id',FetchCustomer);
+router.get('/api/fetch-restaurant-id/:id',FetchRestaurantById);
 
 // Menu Routes
 router.post('/api/add-menu',AddMenu);
@@ -52,6 +54,7 @@ router.post('/api/add-table',AddTable);
 router.get('/api/fetch-table/:id',FetchAllTable);
 router.get('/api/fetch-tableby-staff/:id',FetchTableByStaff);
 router.post('/api/delete-table',DeleteTable);
+router.get('/api/served-order/:id',ServedTable);
 
 // Super Admin Count
 router.get('/api/super-admin-count',SuperAdminCount);

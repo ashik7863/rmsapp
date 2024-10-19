@@ -192,7 +192,57 @@ const AddTable = async (req, res) => {
       await dbInstance.close();
     }
   };
+
+  const ServedTable = async (req, res) => {
+    try {
+      await dbInstance.connect();
+      let {id}=req.body;
+  
+      const orderHist = await dbInstance.num(
+        `SELECT id 
+         FROM table_book WHERE order_id=?`,
+         [id]
+      );
+  
+      if (orderHist > 0) {
+  
+        const update_table = await dbInstance.query(
+          `UPDATE tbl_seat SET status='Available' WHERE tbl_id=?`,
+           [id]
+        );
+
+        const update_order = await dbInstance.query(
+          `UPDATE table_book SET status='Served' WHERE order_id=?`,
+           [id]
+        );
+  
+        if(update_order){
+          return res.json({
+            status: 200,
+            msg: "Order served successfully",
+          });
+        }else{
+          return res.json({
+            status: 500,
+            msg: "Error while updating",
+          });
+        }
+  
+        
+      } else {
+        return res.json({
+          status: 404,
+          msg: "No records found",
+        });
+      }
+  
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    } finally {
+      await dbInstance.close();
+    }
+  };
   
   module.exports = {
-    AddTable,FetchAllTable,DeleteTable,FetchTableByStaff
+    AddTable,FetchAllTable,DeleteTable,FetchTableByStaff,ServedTable
   };

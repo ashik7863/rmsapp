@@ -52,12 +52,16 @@ const PaymentSuccess = async (req, res) => {
   try {
     await dbInstance.connect(); // Connect to the database
 
-    const { payment_id, order_id } = req.body; // Get transaction ID and order ID from the request body
+    const { payment_id, order_id,tbl_id } = req.body; 
 
-    // Update the table_book entry with the transaction ID and set the status to 'Confirmed'
     const result = await dbInstance.query(
       `UPDATE table_book SET tran_id = ?, payment_status=? WHERE order_id = ?`,
       [payment_id, 'Success', order_id]
+    );
+
+    const result1 = await dbInstance.query(
+      `UPDATE tbl_seat SET order_id = ? WHERE tbl_id = ?`,
+      [order_id, tbl_id]
     );
 
     if (result.affectedRows > 0) {

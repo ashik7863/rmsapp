@@ -94,24 +94,25 @@ const UpdateRestaurant = async (req, res) => {
 
     const { id, restaurant_name, email, mobile, password, owner, address } = req.body;
 
+    // Check if the restaurant exists
     const existingRestaurant = await dbInstance.num(
-      `SELECT id FROM restaurant WHERE id = ?`,
+      `SELECT id FROM restaurant WHERE rst_id = ?`,
       [id]
     );
 
     if (existingRestaurant==0) {
       return res.json({
         status: 404,
-        msg: "Restaurant Not Found",
+        msg: "Restaurant not found",
       });
     }
 
     // Update restaurant details
     const result = await dbInstance.query(
       `UPDATE restaurant
-       SET restaurant_name = ?, email = ?, mobile = ?, owner = ?, address = ?
+       SET restaurant_name = ?, email = ?, mobile = ?, password = ?, owner = ?, address = ?
        WHERE id = ?`,
-      [restaurant_name, email, mobile, owner, address, id]
+      [restaurant_name, email, mobile, password, owner, address, id]
     );
 
     if (result.affectedRows > 0) {
@@ -179,5 +180,68 @@ const DeleteRestaurants = async (req, res) => {
   }
 };
 
+const FetchCustomer = async (req, res) => {
+  try {
+    await dbInstance.connect();
+    let id=req.params.id;
+    console.log(id)
 
-module.exports = { AddRestaurant,UpdateRestaurant,FetchAllRestaurants,DeleteRestaurants };
+    const customer = await dbInstance.fetch(
+      `SELECT name,mobile,cr_date 
+       FROM table_book WHERE rst_id=? ORDER BY id DESC`,
+       [id]
+    );
+    const uniqueData = Array.from(
+      new Map(customer.map(item => [item.mobile, item])).values()
+    );
+    if (customer.length > 0) {
+      return res.json({
+        status: 200,
+        data: uniqueData,
+        msg: "Customer fetched successfully",
+      });
+    } else {
+      return res.json({
+        status: 404,
+        msg: "No customer found",
+      });
+    }
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    await dbInstance.close();
+  }
+};
+const FetchRestaurantById = async (req, res) => {
+  try {
+    await dbInstance.connect();
+    let id=req.params.id;
+    console.log(id)
+
+    const restaurant = await dbInstance.fetch(
+      `SELECT * 
+       FROM restaurant WHERE rst_id=?`,
+       [id]
+    );
+  
+    if (restaurant.length > 0) {
+      return res.json({
+        status: 200,
+        data: restaurant,
+        msg: "Restaurant fetched successfully",
+      });
+    } else {
+      return res.json({
+        status: 404,
+        msg: "No restaurant found",
+      });
+    }
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    await dbInstance.close();
+  }
+};
+module.exports = { AddRestaurant,UpdateRestaurant,FetchAllRestaurants,DeleteRestaurants,FetchCustomer,FetchRestaurantById };
