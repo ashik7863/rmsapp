@@ -91,7 +91,7 @@ const UpdateMenu = async (req, res) => {
   try {
     await dbInstance.connect();
 
-    const { id, rst_id, menu_name, description } = req.body;
+    const { id, menu_name, description } = req.body;
 
     // Check if the restaurant exists
     const existingRestaurant = await dbInstance.num(
@@ -108,10 +108,10 @@ const UpdateMenu = async (req, res) => {
 
     // Update restaurant details
     const result = await dbInstance.query(
-      `UPDATE Menu
-       SET menu_name = ?, rst_id = ?, description = ?
+      `UPDATE menu
+       SET menu_name = ?, description = ?
        WHERE id = ?`,
-      [menu_name,rst_id, description]
+      [menu_name, description,id]
     );
 
     if (result.affectedRows > 0) {

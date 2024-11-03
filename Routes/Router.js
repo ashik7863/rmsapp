@@ -2,7 +2,7 @@ const express=require('express');
 
 const {upload,handleMulterError}=require('../Services/FileUtils');
 const {AddRestaurant,UpdateRestaurant,FetchAllRestaurants,DeleteRestaurants,FetchCustomer, FetchRestaurantById, FetchPlanDetailsById}=require('../Controller/RestaurantController');
-const {AddMenu,FetchAllMenu,DeleteMenu}=require('../Controller/MenuController');
+const {AddMenu,FetchAllMenu,DeleteMenu, UpdateMenu}=require('../Controller/MenuController');
 const {AddMenuItem,FetchAllMenuItem,DeleteMenuItem}=require('../Controller/MenuItemController');
 const {AddStaffMember,FetchAllStaff,DeleteStaff}=require('../Controller/StaffController');
 const {AddTable,FetchAllTable,DeleteTable,FetchTableByStaff, ServedTable}=require('../Controller/TableController');
@@ -53,11 +53,13 @@ router.get('/api/fetch-restaurant-plan-details/:id',FetchPlanDetailsById);
 router.post('/api/add-menu',AddMenu);
 router.get('/api/fetch-menu/:id',FetchAllMenu);
 router.post('/api/delete-menu',DeleteMenu);
+router.post('/api/update-menu',UpdateMenu);
 
 // Item Routes
 router.post('/api/add-menu-item', upload.single('image'),handleMulterError, AddMenuItem);
 router.get('/api/fetch-menu-item/:id',FetchAllMenuItem);
 router.post('/api/delete-menu-item',DeleteMenuItem);
+router.post('/api/update-menu-item',DeleteMenuItem);
 
 // Staff Routes
 router.post('/api/add-staff', upload.single('image'),handleMulterError, AddStaffMember);
