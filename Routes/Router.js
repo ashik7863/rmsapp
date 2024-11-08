@@ -6,11 +6,11 @@ const {AddMenu,FetchAllMenu,DeleteMenu, UpdateMenu}=require('../Controller/MenuC
 const {AddMenuItem,FetchAllMenuItem,DeleteMenuItem}=require('../Controller/MenuItemController');
 const {AddStaffMember,FetchAllStaff,DeleteStaff}=require('../Controller/StaffController');
 const {AddTable,FetchAllTable,DeleteTable,FetchTableByStaff, ServedTable}=require('../Controller/TableController');
-const {Login,ForgotPassword, OtpVerify, ResetPassword, LoginStaff}=require('../Controller/LoginController');
+const {Login,ForgotPassword, OtpVerify, ResetPassword, LoginStaff, LogoutAdmin}=require('../Controller/LoginController');
 const {CreateOrder,PaymentSuccess,FetchOrderByMobile, FetchOrderByRestaurant}=require('../Controller/OrderController');
 const { SuperAdminCount ,AdminCount} = require('../Controller/CountController');
 const { FetchAllRestaurantsReports } = require('../Controller/ReportsController');
-const { FetchAllPlan, AddPlan, PurchaseNewPlan } = require('../Controller/PlanController');
+const { FetchAllPlan, AddPlan, PurchaseNewPlan, UpdatePlan, DeletePlan } = require('../Controller/PlanController');
 const { Test } = require('../Controller/TestController');
 
 
@@ -18,6 +18,7 @@ const router = express.Router();
 
 // Auth Route
 router.post('/api/login',Login);
+router.post('/api/logout-admin',LogoutAdmin);
 router.post('/api/login-staff',LoginStaff);
 router.post('/api/forgot-password',ForgotPassword);
 router.post('/api/verify-otp',OtpVerify);
@@ -84,6 +85,8 @@ router.get('/api/report/all-restaurant',FetchAllRestaurantsReports);
 router.post('/api/add-new-plan',AddPlan);
 router.get('/api/fetch-all-plan',FetchAllPlan);
 router.post('/api/new-plan-purchase',PurchaseNewPlan);
+router.post('/api/update-plan',UpdatePlan);
+router.post('/api/delete-plan',DeletePlan);
 
 // For testing controller
 router.get('/api/test',Test);

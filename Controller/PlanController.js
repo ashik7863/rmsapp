@@ -112,4 +112,103 @@ const PurchaseNewPlan = async (req, res) => {
   }
 };
 
-module.exports = { FetchAllPlan, AddPlan, PurchaseNewPlan };
+const UpdatePlan = async (req, res) => {
+  try {
+    await dbInstance.connect();
+    const { plan, amount,month_count,id } = req.body;
+
+    const isExist = await dbInstance.num(
+      `SELECT id FROM plan WHERE id = ?`,
+      [id]
+    );
+
+    if (isExist == 0) {
+      return res.json({
+        status: 500,
+        msg: "Plan is not found",
+      });
+    }
+
+    const result = await dbInstance.query(
+      `UPDATE plan SET plan=?,amount=?,month_count=? WHERE id=?`,
+      [plan, amount,month_count,id]
+    );
+
+    if (result.affectedRows > 0) {
+      return res.json({
+        status: 200,
+        msg: "Plan Updated Successfully",
+      });
+    } else {
+      return res.json({
+        status: 400,
+        msg: "Error While Submitting",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    await dbInstance.close();
+  }
+};
+
+const DeletePlan = async (req, res) => {
+  try {
+    await dbInstance.connect();
+    let {id}=req.body;
+
+    const menuItem = await dbInstance.num(
+      `SELECT id 
+       FROM plan WHERE id=?`,
+       [id]
+    );
+
+    if (menuItem > 0) {     
+
+      const checkPlan = await dbInstance.num(
+        `SELECT id 
+         FROM plan_details WHERE plan_id=? AND status=?`,
+         [id,'Running']
+      );
+
+      if(checkPlan>0){
+        return res.json({
+          status: 404,
+          msg: "Plan is already used",
+        });
+      }
+
+      const delete_res = await dbInstance.query(
+        `DELETE 
+         FROM plan WHERE id=?`,
+         [id]
+      );
+
+      if(delete_res){
+        return res.json({
+          status: 200,
+          msg: "Plan deleted successfully",
+        });
+      }else{
+        return res.json({
+          status: 500,
+          msg: "Error while deleting",
+        });
+      }
+
+      
+    } else {
+      return res.json({
+        status: 404,
+        msg: "No Plan found",
+      });
+    }
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    await dbInstance.close();
+  }
+};
+
+module.exports = { FetchAllPlan, AddPlan, PurchaseNewPlan,UpdatePlan,DeletePlan };

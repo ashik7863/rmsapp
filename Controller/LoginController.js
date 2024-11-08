@@ -75,13 +75,27 @@ const Login = async (req, res) => {
   
       // Fetch user data from the restaurant table using email and hashed password
       const userdata = await dbInstance.arr(
-        `SELECT id, rst_id, owner, restaurant_name 
+        `SELECT id, rst_id, owner, restaurant_name,is_logged 
          FROM restaurant WHERE email=? AND password=?`,
         [email, hashedPassword]
       );
   
-      // If userdata exists, return success response
+       
+
       if (userdata) {
+
+        if (userdata['is_logged']!=null) {
+          return res.status(200).json({
+            status: 404,
+            msg: "Already logged in another device",
+          });
+        }else{
+          const upd = await dbInstance.query(
+            `UPDATE restaurant SET is_logged='Yes' WHERE email=? AND password=?`,
+            [email, hashedPassword]
+          );
+        }
+
         return res.status(200).json({
           status: 200,
           data: userdata,
@@ -110,7 +124,6 @@ const Login = async (req, res) => {
   
       let { email } = req.body;
       const otp = generateOTP();
-      console.log(email);
   
       // Check if email is provided
       if (!email) {
@@ -321,4 +334,35 @@ const Login = async (req, res) => {
   };
 
 
-  module.exports = { Login,ForgotPassword,OtpVerify,ResetPassword,LoginStaff };
+  const LogoutAdmin = async (req, res) => {
+    try {
+      await dbInstance.connect();
+  
+      let { rst_id } = req.body;
+  
+      // Check if both email and password are provided
+      if (!rst_id) {
+        return res.status(404).json({
+          status: 404,
+          msg: "Please fill in mandatory fields",
+        });
+      }
+  
+      const userdataUpd = await dbInstance.query(
+        `UPDATE SET restaurant is_logged='' WHERE rst_id=?`,
+        [rst_id]
+      );
+
+        return res.status(200).json({
+          status: 200,
+          msg: "Logout successfully",
+        });
+      
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    } finally {
+      await dbInstance.close();
+    }
+  };
+
+  module.exports = { Login,ForgotPassword,OtpVerify,ResetPassword,LoginStaff,LogoutAdmin };
