@@ -66,7 +66,9 @@ const AddMenuItem = async (req, res) => {
       await dbInstance.connect();
       let { id } = req.params;
       let rst_id = id;
- 
+
+      console.log(rst_id)
+      
       // Fetch all menu items for the given restaurant
       const menu = await dbInstance.fetch(
         `SELECT * FROM menu_item WHERE rst_id=? ORDER BY id DESC`,
@@ -114,8 +116,10 @@ const UpdateMenuItem = async (req, res) => {
   try {
     await dbInstance.connect();
 
-    const { id,rst_id,menu_id, name, description,rate,swiggyZomatoPercentage,swiggyZomatoRate,calorie,portion,item_type } = req.body;
-      const image = req.file ? req.file.filename : null;
+    const { id,rst_id,menu_id, name, description,price,swi_perc,swi_rate,calorie,portion,item_type,image } = req.body;
+      const image1 = req.file ? req.file.filename : image;
+
+      console.log(image1)
 
     // Check if the restaurant exists
     const existingRestaurant = await dbInstance.num(
@@ -133,9 +137,9 @@ const UpdateMenuItem = async (req, res) => {
     // Update restaurant details
     const result = await dbInstance.query(
       `UPDATE menu_item
-       SET menu_id=?, name=?, image=?, description=?, price=?, swi_perc=?, swi_rate=?, calorie=?, portion=?, item_type=?
+       SET name=?, image=?, description=?, price=?, swi_perc=?, swi_rate=?, calorie=?, portion=?, item_type=?
        WHERE id = ?`,
-      [menu_id,name,image, description,rate,swiggyZomatoPercentage,swiggyZomatoRate,calorie,portion,item_type,id]
+      [name,image1, description,price,swi_perc,swi_rate,calorie,portion,item_type,id]
     );
 
     if (result.affectedRows > 0) {

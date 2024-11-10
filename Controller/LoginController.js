@@ -84,16 +84,18 @@ const Login = async (req, res) => {
 
       if (userdata) {
 
-        if (userdata['is_logged']!=null) {
-          return res.status(200).json({
-            status: 404,
-            msg: "Already logged in another device",
-          });
-        }else{
-          const upd = await dbInstance.query(
-            `UPDATE restaurant SET is_logged='Yes' WHERE email=? AND password=?`,
-            [email, hashedPassword]
-          );
+        if(userdata['id']!=6){
+          if (userdata['is_logged']!=null) {
+            return res.status(200).json({
+              status: 404,
+              msg: "Already logged in another device",
+            });
+          }else{
+            const upd = await dbInstance.query(
+              `UPDATE restaurant SET is_logged='Yes' WHERE email=? AND password=?`,
+              [email, hashedPassword]
+            );
+          }
         }
 
         return res.status(200).json({
