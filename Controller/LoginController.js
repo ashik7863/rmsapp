@@ -85,7 +85,7 @@ const Login = async (req, res) => {
       if (userdata) {
 
         if(userdata['id']!=6){
-          if (userdata['is_logged']!=null || userdata['is_logged']!="") {
+          if (userdata['is_logged']!='No') {
             return res.status(200).json({
               status: 404,
               msg: "Already logged in another device",
@@ -351,7 +351,7 @@ const Login = async (req, res) => {
       }
   
       const userdataUpd = await dbInstance.query(
-        `UPDATE SET restaurant is_logged='' WHERE rst_id=?`,
+        `UPDATE SET restaurant is_logged='No' WHERE rst_id=?`,
         [rst_id]
       );
 
