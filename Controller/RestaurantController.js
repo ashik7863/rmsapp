@@ -38,9 +38,9 @@ const AddRestaurant = async (req, res) => {
     let today = new Date();
     let today1=today.toISOString().split('T')[0];
     const result = await dbInstance.query(
-      `INSERT INTO restaurant (rst_id,owner, email, mobile, password, restaurant_name, address,status,logo,cr_date,docs,is_logged)
-       VALUES (?,?, ?, ?, ?, ?, ?,?,?,?,?,?)`,
-      [restaurantId,owner, email, mobile, password, restaurant_name, address,'Active',logo,today1,documents,'No']
+      `INSERT INTO restaurant (rst_id,owner, email, mobile, password, restaurant_name, address,status,logo,cr_date,docs)
+       VALUES (?,?, ?, ?, ?, ?, ?,?,?,?,?)`,
+      [restaurantId,owner, email, mobile, password, restaurant_name, address,'Active',logo,today1,documents]
     );
 
     const nextMonth = new Date();
