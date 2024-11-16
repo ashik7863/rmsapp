@@ -54,9 +54,23 @@ const handleMulterError = (err, req, res, next) => {
 };
 
 
+const storageStaff = multer.diskStorage({
+  destination: (req, file, cb) => {
+    let uploadPath = "uploads/staff/";
+
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    const randomName = generateRandomName();
+    cb(null, `${randomName}${path.extname(file.originalname)}`);
+  },
+});
+const uploadStaff = multer({ storage: storageStaff, fileFilter: fileFilter });
+
 module.exports = {
   fileFilter,
   generateRandomName,
   upload,
+  uploadStaff,
   handleMulterError
 };

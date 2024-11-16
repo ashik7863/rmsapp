@@ -1,10 +1,10 @@
 const express=require('express');
 
-const {upload,handleMulterError}=require('../Services/FileUtils');
+const {upload,uploadStaff,handleMulterError}=require('../Services/FileUtils');
 const {AddRestaurant,UpdateRestaurant,FetchAllRestaurants,DeleteRestaurants,FetchCustomer, FetchRestaurantById, FetchPlanDetailsById}=require('../Controller/RestaurantController');
 const {AddMenu,FetchAllMenu,DeleteMenu, UpdateMenu}=require('../Controller/MenuController');
 const {AddMenuItem,FetchAllMenuItem,DeleteMenuItem, UpdateMenuItem}=require('../Controller/MenuItemController');
-const {AddStaffMember,FetchAllStaff,DeleteStaff}=require('../Controller/StaffController');
+const {AddStaffMember,FetchAllStaff,DeleteStaff, UpdateStaffMember}=require('../Controller/StaffController');
 const {AddTable,FetchAllTable,DeleteTable,FetchTableByStaff, ServedTable}=require('../Controller/TableController');
 const {Login,ForgotPassword, OtpVerify, ResetPassword, LoginStaff, LogoutAdmin}=require('../Controller/LoginController');
 const {CreateOrder,PaymentSuccess,FetchOrderByMobile, FetchOrderByRestaurant}=require('../Controller/OrderController');
@@ -63,9 +63,30 @@ router.post('/api/delete-menu-item',DeleteMenuItem);
 router.post('/api/update-menu-item',upload.single('image'),handleMulterError,UpdateMenuItem);
 
 // Staff Routes
-router.post('/api/add-staff', upload.single('image'),handleMulterError, AddStaffMember);
+
+router.post('/api/add-staff', 
+  uploadStaff.fields([
+      { name: 'image', maxCount: 1 },
+      { name: 'aadhaar', maxCount: 1 },
+      { name: 'voter', maxCount: 1 },
+      { name: 'qualification', maxCount: 1 }
+  ]),
+  handleMulterError,
+  AddStaffMember
+);
 router.get('/api/fetch-staff/:id',FetchAllStaff);
 router.post('/api/delete-staff',DeleteStaff);
+router.post('/api/update-staff', 
+  uploadStaff.fields([
+      { name: 'image', maxCount: 1 },
+      { name: 'aadhaar', maxCount: 1 },
+      { name: 'voter', maxCount: 1 },
+      { name: 'qualification', maxCount: 1 }
+  ]),
+  handleMulterError,
+  UpdateStaffMember
+);
+
 
 // Menu Routes
 router.post('/api/add-table',AddTable);

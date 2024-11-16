@@ -1,5 +1,5 @@
 const DB = require('../config');
-
+const {deleteFile} = require('../DeleteFile');
 const dbInstance = new DB();
 
 function generateEmpId() {
@@ -30,7 +30,15 @@ const AddStaffMember = async (req, res) => {
       ifsc,
       status
     } = req.body;
-    const picture = req.file ? req.file.filename : null; // Get the uploaded image filename
+    // const picture = req.file ? req.file.filename : null;
+
+    let { image, aadhaar, voter, qualification } = req.files;
+
+
+      image= image ? image[0].path : null,
+      aadhaar= aadhaar ? aadhaar[0].path : null,
+      voter= voter ? voter[0].path : null,
+      qualification= qualification ? qualification[0].path : null
 
     // Check for duplicates
     const duplicateCheck = await dbInstance.num(
@@ -48,9 +56,11 @@ const AddStaffMember = async (req, res) => {
     // Insert new staff member
     let staff_id = generateEmpId();
     const result = await dbInstance.query(
-      `INSERT INTO staff (rst_id,emp_id, name, dob, mobile, gender, email, address, role, salary, bank, acc_no, ifsc, status, picture)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)`,
-      [rst_id,staff_id, name, dob, mobile, gender, email, address, role, salary, bank, acc_no, ifsc, 'Active', picture]
+      `INSERT INTO staff (rst_id,emp_id, name, dob, mobile, gender, email, address,
+       role, salary, bank, acc_no, ifsc, status, image,aadhaar,voter,qualification)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)`,
+      [rst_id,staff_id, name, dob, mobile, gender, email, address, role, salary, bank,
+         acc_no, ifsc, 'Active', image,aadhaar,voter,qualification]
     );
 
     if (result.affectedRows > 0) {
@@ -76,7 +86,6 @@ const AddStaffMember = async (req, res) => {
 const UpdateStaffMember = async (req, res) => {
   try {
     await dbInstance.connect();
-
     // Extract fields from the request body and file
     const {
       id,
@@ -91,9 +100,34 @@ const UpdateStaffMember = async (req, res) => {
       bank,
       acc_no,
       ifsc,
-      status
+      status,
+      oldImage,
+      oldAadhaar,
+      oldVoter,
+      oldCertificate
     } = req.body;
-    const picture = req.file ? req.file.filename : null; // Get the uploaded image filename
+
+
+    let { image, aadhaar, voter, qualification } = req.files;
+
+    if(image){
+      deleteFile(oldImage);
+    }
+    if(aadhaar){
+      deleteFile(oldAadhaar);
+    }
+    if(voter){
+      deleteFile(oldVoter);
+    }
+    if(qualification){
+      deleteFile(oldCertificate);
+    }
+    image= image ? image[0].path : oldImage,
+    aadhaar= aadhaar ? aadhaar[0].path : oldAadhaar,
+    voter= voter ? voter[0].path : oldVoter,
+    qualification= qualification ? qualification[0].path : oldCertificate
+
+    
 
     // Check for Existing
     const existingStaff = await dbInstance.num(
@@ -108,13 +142,14 @@ const UpdateStaffMember = async (req, res) => {
       });
     }
 
-    // Insert new staff member
-
+    // Update staff member
     const result = await dbInstance.query(
       `UPDATE staff 
-       SET rst_id = ?, name = ?, dob = ?, mobile = ?, gender = ?, email = ?, address = ?, role = ?, salary = ?, bank = ?, acc_no = ?, ifsc = ?, status = ?, picture = ? 
-       WHERE id = ?`,
-      [rst_id, name, dob, mobile, gender, email, address, role, salary, bank, acc_no, ifsc, status, picture, id]
+       SET name = ?, dob = ?, mobile = ?, gender = ?, email = ?, address = ?, role = ?,
+        salary = ?, bank = ?, acc_no = ?, ifsc = ?, status = ?, image = ?,aadhaar=?,voter=?,
+        qualification=? WHERE id = ?`,
+      [name, dob, mobile, gender, email, address, role, salary, bank, acc_no, ifsc,
+         status, image,aadhaar,voter,qualification, id]
     );
     
 

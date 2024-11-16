@@ -53,6 +53,51 @@ const AddTable = async (req, res) => {
     }
   };
 
+  const UpdateTable = async (req, res) => {
+    try {
+      await dbInstance.connect();
+  
+      const { rst_id, tbl_no, seat, status,staff } = req.body;
+  
+      // Check for duplicates (optional)
+      const duplicateCheck = await dbInstance.num(
+        `SELECT id FROM tbl_seat WHERE tbl_No = ?`,
+        [tbl_no]
+      );
+  
+      if (duplicateCheck > 0) {
+        return res.json({
+          status: 500,
+          msg: "Table already exists.",
+        });
+      }
+  
+      // Insert new table
+      let tbl_id=generateTableId();
+      const result = await dbInstance.query(
+        `INSERT INTO tbl_seat (rst_id, tbl_id, tbl_no, seat, status,staff_id)
+         VALUES (?, ?, ?, ?, ?,?)`,
+        [rst_id, tbl_id, tbl_no, seat, status,staff]
+      );
+  
+      if (result.affectedRows > 0) {
+        return res.json({
+          status: 200,
+          msg: "Table added successfully.",
+        });
+      } else {
+        return res.json({
+          status: 400,
+          msg: "Error while adding table.",
+        });
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    } finally {
+      await dbInstance.close();
+    }
+  };
+
   const FetchAllTable = async (req, res) => {
     try {
       await dbInstance.connect();

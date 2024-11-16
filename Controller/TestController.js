@@ -6,13 +6,16 @@ const Test = async (req, res) => {
   try {
     await dbInstance.connect();
     
-    const data = await dbInstance.arr(
-      `SELECT * FROM restaurant WHERE id=27`
+    // const data = await dbInstance.query(
+    //   `UPDATE restaurant SET is_logged='No'`
+    // );
+    const data = await dbInstance.fetch(
+      `SELECT * FROM staff`
     );
     
     return res.json({
         status: 200,
-        data:data['is_logged']==null,
+        data:data,
         msg: "Successfull",
     });
 
