@@ -351,7 +351,7 @@ const Login = async (req, res) => {
       }
   
       const userdataUpd = await dbInstance.query(
-        `UPDATE SET restaurant is_logged='No' WHERE rst_id=?`,
+        `UPDATE restaurant SET is_logged='No' WHERE rst_id=?`,
         [rst_id]
       );
 
