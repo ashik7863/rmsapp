@@ -1,5 +1,6 @@
 const DB = require('../config');
 const { fileFilter, generateRandomName } = require('../Services/Functions');
+const {deleteFile} = require('../DeleteFile');
 
 const dbInstance = new DB();
 
@@ -13,9 +14,13 @@ function generateMenuId() {
 const AddMenuItem = async (req, res) => {
     try {
       await dbInstance.connect();
+
+      if (!req.file) {
+        return res.status(400).json({ message: 'No image file uploaded.' });
+      }
   
       const { rst_id,menu_id, name, description,rate,swiggyZomatoPercentage,swiggyZomatoRate,calorie,portion,item_type } = req.body;
-      const image = req.file ? req.file.filename : null;
+      const image = `uploads/menuitem/${req.file.filename}`;
   
       // Check for duplicates
       const duplicateCheck = await dbInstance.num(
@@ -116,10 +121,12 @@ const UpdateMenuItem = async (req, res) => {
   try {
     await dbInstance.connect();
 
-    const { id,rst_id,menu_id, name, description,price,swi_perc,swi_rate,calorie,portion,item_type,image } = req.body;
-      const image1 = req.file ? req.file.filename : image;
+    const { id,rst_id,menu_id, name, description,price,swi_perc,swi_rate,calorie,portion,item_type,oldimage } = req.body;
+      const image1 = req.file ? `uploads/menuitem/${req.file.filename}` : oldimage;
 
-      console.log(image1)
+      if (req.file) {
+        deleteFile(oldimage);
+      }
 
     // Check if the restaurant exists
     const existingRestaurant = await dbInstance.num(
