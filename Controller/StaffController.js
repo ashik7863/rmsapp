@@ -1,5 +1,6 @@
 const DB = require('../config');
 const {deleteFile} = require('../DeleteFile');
+const {HashPassword} = require('../Services/Functions');
 const dbInstance = new DB();
 
 function generateEmpId() {
@@ -33,7 +34,7 @@ const AddStaffMember = async (req, res) => {
     // const picture = req.file ? req.file.filename : null;
 
     let { image, aadhaar, voter, qualification } = req.files;
-
+    let password=HashPassword(req.body.password);
 
       image= image ? image[0].path : null,
       aadhaar= aadhaar ? aadhaar[0].path : null,
@@ -57,10 +58,10 @@ const AddStaffMember = async (req, res) => {
     let staff_id = generateEmpId();
     const result = await dbInstance.query(
       `INSERT INTO staff (rst_id,emp_id, name, dob, mobile, gender, email, address,
-       role, salary, bank, acc_no, ifsc, status, image,aadhaar,voter,qualification)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)`,
+       role, salary, bank, acc_no, ifsc, status, image,aadhaar,voter,qualification,password)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?)`,
       [rst_id,staff_id, name, dob, mobile, gender, email, address, role, salary, bank,
-         acc_no, ifsc, 'Active', image,aadhaar,voter,qualification]
+         acc_no, ifsc, 'Active', image,aadhaar,voter,qualification,password]
     );
 
     if (result.affectedRows > 0) {
