@@ -15,7 +15,9 @@ const AddMenuItem = async (req, res) => {
       await dbInstance.connect();
   
       const { rst_id,menu_id, name, description,rate,swiggyZomatoPercentage,swiggyZomatoRate,calorie,portion,item_type } = req.body;
-      const image = req.file ? req.file.filename : null;
+      const imagealt = req.file ? req.file.filename : null;
+      
+      const image=`uploads/menuitem/${imagealt}`;
   
       // Check for duplicates
       const duplicateCheck = await dbInstance.num(
@@ -66,8 +68,6 @@ const AddMenuItem = async (req, res) => {
       await dbInstance.connect();
       let { id } = req.params;
       let rst_id = id;
-
-      console.log(rst_id)
       
       // Fetch all menu items for the given restaurant
       const menu = await dbInstance.fetch(

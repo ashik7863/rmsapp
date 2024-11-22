@@ -7,10 +7,10 @@ const Test = async (req, res) => {
     await dbInstance.connect();
     
     // const data = await dbInstance.query(
-    //   `UPDATE restaurant SET is_logged='No'`
+    //   `DELETE FROM restaurant WHERE id=39`
     // );
     const data = await dbInstance.fetch(
-      `SELECT * FROM staff`
+      `SELECT * FROM restaurant`
     );
     
     return res.json({

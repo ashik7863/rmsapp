@@ -67,10 +67,24 @@ const storageStaff = multer.diskStorage({
 });
 const uploadStaff = multer({ storage: storageStaff, fileFilter: fileFilter });
 
+const storageItem = multer.diskStorage({
+  destination: (req, file, cb) => {
+    let uploadPath = "uploads/menuitem/";
+
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    const randomName = generateRandomName();
+    cb(null, `${randomName}${path.extname(file.originalname)}`);
+  },
+});
+const uploadItem = multer({ storage: storageItem, fileFilter: fileFilter });
+
 module.exports = {
   fileFilter,
   generateRandomName,
   upload,
   uploadStaff,
+  uploadItem,
   handleMulterError
 };
