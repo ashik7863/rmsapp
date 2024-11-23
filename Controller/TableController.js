@@ -286,7 +286,39 @@ const AddTable = async (req, res) => {
       await dbInstance.close();
     }
   };
+
+  const CheckTableStatus = async (req, res) => {
+    try {
+      await dbInstance.connect();
+      let { id } = req.params;
+
+      // Fetch all menu items for the given restaurant
+      const tableList = await dbInstance.arr(
+        `SELECT status FROM tbl_seat WHERE tbl_id=?`,
+        [id]
+      ); 
+
+      if (tableList) {
+        return res.json({
+          status: 200,
+          data: tableList,
+          msg: "Table details fetched successfully",
+        });
+      } else {
+        return res.json({
+          status: 404,
+          msg: "No table details found",
+        });
+      }
+  
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: error.message });
+    } finally {
+      await dbInstance.close();
+    }
+  };
   
   module.exports = {
-    AddTable,FetchAllTable,DeleteTable,FetchTableByStaff,ServedTable
+    AddTable,FetchAllTable,DeleteTable,FetchTableByStaff,ServedTable,CheckTableStatus
   };

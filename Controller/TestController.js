@@ -6,11 +6,9 @@ const Test = async (req, res) => {
   try {
     await dbInstance.connect();
     
-    // const data = await dbInstance.query(
-    //   `DELETE FROM restaurant WHERE id=39`
-    // );
+
     const data = await dbInstance.fetch(
-      `SELECT * FROM restaurant`
+      `SELECT * FROM tbl_seat`
     );
     
     return res.json({
