@@ -110,7 +110,49 @@ const AddMenuItem = async (req, res) => {
     }
   };
   
+  const FetchItemByMenu = async (req, res) => {
+    try {
+      await dbInstance.connect();
+      let { id } = req.params;
+      console.log(id,'ok')
+      // Fetch all menu items for the given restaurant
+      const menu = await dbInstance.fetch(
+        `SELECT * FROM menu_item WHERE menu_id=? ORDER BY id DESC`,
+        [id]
+      );
+      let menuItemList = await Promise.all(
+        menu.map(async (item) => {
+          let menu_id = item.menu_id;
+          
+          const menu_name = await dbInstance.arr(
+            `SELECT menu_name FROM menu WHERE menu_id=?`,
+            [menu_id]
+          );
+      
+          return { ...item, menu_name: menu_name?.menu_name || '' };
+        })
+      );
 
+      if (menuItemList.length > 0) {
+        return res.json({
+          status: 200,
+          data: menuItemList,
+          msg: "Menu items fetched successfully",
+        });
+      } else {
+        return res.json({
+          status: 404,
+          msg: "No menu items found",
+        });
+      }
+  
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: error.message });
+    } finally {
+      await dbInstance.close();
+    }
+  };
 
 const UpdateMenuItem = async (req, res) => {
   try {
@@ -208,4 +250,4 @@ const DeleteMenuItem = async (req, res) => {
 };
 
 
-module.exports = { AddMenuItem,FetchAllMenuItem,DeleteMenuItem,UpdateMenuItem };
+module.exports = { AddMenuItem,FetchAllMenuItem,DeleteMenuItem,UpdateMenuItem,FetchItemByMenu };

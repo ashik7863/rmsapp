@@ -8,7 +8,7 @@ const Test = async (req, res) => {
     
 
     const data = await dbInstance.fetch(
-      `SELECT * FROM tbl_seat`
+      `SELECT * FROM table_book`
     );
     
     return res.json({
