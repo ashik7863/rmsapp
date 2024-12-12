@@ -12,7 +12,7 @@ const CreateOrder = async (req, res) => {
   try {
     await dbInstance.connect(); // Connect to the database
 
-    const { name, mobile, cart_items, amount, rst_id, tbl_id } = req.body;
+    const { name, mobile, cart_items, amount, rst_id, tbl_id,nop } = req.body;
     const orderId = generateBookId();
     const jsonString = JSON.stringify(cart_items, null, 2);
     const cr_date = new Date().toISOString().slice(0, 10);
@@ -20,8 +20,8 @@ const CreateOrder = async (req, res) => {
 
     const result = await dbInstance.query(
       `INSERT INTO table_book 
-      (name, mobile, cart_items,status, order_id,total_amount,cr_date,cr_time,rst_id,tbl_id) 
-      VALUES (?, ?, ?, ?, ?,?,?,?,?,?)`,
+      (name, mobile, cart_items,status, order_id,total_amount,cr_date,cr_time,rst_id,tbl_id,nop) 
+      VALUES (?, ?, ?, ?, ?,?,?,?,?,?,?)`,
       [
         name,
         mobile,
@@ -33,6 +33,7 @@ const CreateOrder = async (req, res) => {
         cr_time,
         rst_id,
         tbl_id,
+        nop
       ]
     );
 

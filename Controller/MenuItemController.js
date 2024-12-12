@@ -14,7 +14,7 @@ const AddMenuItem = async (req, res) => {
     try {
       await dbInstance.connect();
   
-      const { rst_id,menu_id, name, description,rate,swiggyZomatoPercentage,swiggyZomatoRate,calorie,portion,item_type } = req.body;
+      const { rst_id,menu_id, name, description,rate,swiggyZomatoPercentage,swiggyZomatoRate,calorie,portion,item_type,serve } = req.body;
       const imagealt = req.file ? req.file.filename : null;
       
       const image=`uploads/menuitem/${imagealt}`;
@@ -37,9 +37,9 @@ const AddMenuItem = async (req, res) => {
       // Insert new menu item
       const result = await dbInstance.query(
         `INSERT INTO menu_item 
-        (rst_id, menu_id, item_id, name, image, description, price, swi_perc, swi_rate, calorie, \`portion\`, item_type)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [rst_id, menu_id, item_id, name, image, description, rate, swiggyZomatoPercentage, swiggyZomatoRate, calorie, portion, item_type]
+        (rst_id, menu_id, item_id, name, image, description, price, swi_perc, swi_rate, calorie, \`portion\`, item_type,served_time)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)`,
+        [rst_id, menu_id, item_id, name, image, description, rate, swiggyZomatoPercentage, swiggyZomatoRate, calorie, portion, item_type,serve]
     );
     
   
