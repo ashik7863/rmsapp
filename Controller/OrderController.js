@@ -16,8 +16,13 @@ const CreateOrder = async (req, res) => {
     const orderId = generateBookId();
     const jsonString = JSON.stringify(cart_items, null, 2);
     const cr_date = new Date().toISOString().slice(0, 10);
-    const cr_time = new Date().toLocaleTimeString();
-
+    const cr_time = new Date().toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      timeZone: 'Asia/Kolkata',
+    });
+    console.log(cr_time,'Test');
     const result = await dbInstance.query(
       `INSERT INTO table_book 
       (name, mobile, cart_items,status, order_id,total_amount,cr_date,cr_time,rst_id,tbl_id,nop) 
@@ -100,7 +105,6 @@ const FetchOrderByMobile = async (req, res) => {
   try {
     await dbInstance.connect();
     let mobile = req.params.mobile;
-    console.log(mobile);
 
     const orders = await dbInstance.fetch(
       `SELECT * 
@@ -108,16 +112,33 @@ const FetchOrderByMobile = async (req, res) => {
       [mobile]
     );
 
-    if (orders.length > 0) {
+    let updatedOrder = await Promise.all(
+      orders.map(async (item) => {
+        let cart_items = JSON.parse(item.cart_items);
+        let maxWait = 0;
+        if(cart_items){
+          for (const { item_id } of cart_items) {          
+            const fetchWaiting = await dbInstance.arr(
+              `SELECT served_time FROM menu_item WHERE item_id=?`,
+              [item_id]
+            );
+            maxWait = Math.max(maxWait, fetchWaiting?.served_time || 0);
+          }
+        }                
+        return { ...item, maxWait };
+      })
+    );
+
+    if (updatedOrder.length > 0) {
       return res.json({
         status: 200,
-        data: orders,
+        data: updatedOrder,
         msg: "Order fetched successfully",
       });
     } else {
       return res.json({
         status: 404,
-        msg: "No menu found",
+        msg: "No order found",
       });
     }
   } catch (error) {

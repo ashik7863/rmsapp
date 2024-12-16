@@ -7,16 +7,25 @@ const Test = async (req, res) => {
     await dbInstance.connect();
     
 
-    // const data = await dbInstance.fetch(
-    //   `UPDATE tbl_seat SET status='Available'`
+    // const data = await dbInstance.query(
+    //   `UPDATE restaurant SET is_logged='No'`
     // );
-    // const addField=await dbInstance.query(
-    // `ALTER TABLE menu_item
-    // ADD served_time VARCHAR(50);
-    // `);
-    const data = await dbInstance.query(
-      `SELECT * FROM menu_item`
+    const data = await dbInstance.fetch(
+      `SELECT * FROM restaurant`
     );
+    // const data = await dbInstance.query(
+    //   `DELETE FROM table_book WHERE mobile='2565500253'`
+    // );
+    // const data = await dbInstance.query(
+    //   `ALTER TABLE table_book ADD COLUMN cr_time VARCHAR(255)`
+    // );
+    // "2565500253"
+    // const addField=await dbInstance.query(
+    // `ALTER TABLE table_book
+    // DROP cr_time`);
+    // const data = await dbInstance.query(
+    //   `SELECT * FROM menu_item`
+    // );
     
     return res.json({
         status: 200,

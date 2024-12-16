@@ -240,6 +240,7 @@ const FetchCustomer = async (req, res) => {
     const uniqueData = Array.from(
       new Map(customer.map(item => [item.mobile, item])).values()
     );
+    
     if (customer.length > 0) {
       return res.json({
         status: 200,

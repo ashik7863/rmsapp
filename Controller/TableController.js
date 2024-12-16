@@ -57,12 +57,12 @@ const AddTable = async (req, res) => {
     try {
       await dbInstance.connect();
   
-      const { rst_id, tbl_no, seat, status,staff } = req.body;
+      const { tbl_no, seat, status,staff,tbl_id } = req.body;
   
       // Check for duplicates (optional)
       const duplicateCheck = await dbInstance.num(
-        `SELECT id FROM tbl_seat WHERE tbl_No = ?`,
-        [tbl_no]
+        `SELECT id FROM tbl_seat WHERE tbl_No = ? AND tbl_id!=?`,
+        [tbl_no,tbl_id]
       );
   
       if (duplicateCheck > 0) {
@@ -73,17 +73,15 @@ const AddTable = async (req, res) => {
       }
   
       // Insert new table
-      let tbl_id=generateTableId();
       const result = await dbInstance.query(
-        `INSERT INTO tbl_seat (rst_id, tbl_id, tbl_no, seat, status,staff_id)
-         VALUES (?, ?, ?, ?, ?,?)`,
-        [rst_id, tbl_id, tbl_no, seat, status,staff]
+        `UPDATE tbl_seat SET tbl_no=?, seat=?, status=?,staff_id=? WHERE tbl_id=?`,
+        [ tbl_no, seat, status,staff,tbl_id]
       );
   
       if (result.affectedRows > 0) {
         return res.json({
           status: 200,
-          msg: "Table added successfully.",
+          msg: "Table updated successfully.",
         });
       } else {
         return res.json({
@@ -320,5 +318,5 @@ const AddTable = async (req, res) => {
   };
   
   module.exports = {
-    AddTable,FetchAllTable,DeleteTable,FetchTableByStaff,ServedTable,CheckTableStatus
+    AddTable,FetchAllTable,DeleteTable,FetchTableByStaff,ServedTable,CheckTableStatus,UpdateTable
   };

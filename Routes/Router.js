@@ -5,7 +5,7 @@ const {AddRestaurant,UpdateRestaurant,FetchAllRestaurants,DeleteRestaurants,Fetc
 const {AddMenu,FetchAllMenu,DeleteMenu, UpdateMenu}=require('../Controller/MenuController');
 const {AddMenuItem,FetchAllMenuItem,DeleteMenuItem, UpdateMenuItem, FetchItemByMenu}=require('../Controller/MenuItemController');
 const {AddStaffMember,FetchAllStaff,DeleteStaff, UpdateStaffMember}=require('../Controller/StaffController');
-const {AddTable,FetchAllTable,DeleteTable,FetchTableByStaff, ServedTable, CheckTableStatus}=require('../Controller/TableController');
+const {AddTable,FetchAllTable,DeleteTable,FetchTableByStaff, ServedTable, CheckTableStatus, UpdateTable}=require('../Controller/TableController');
 const {Login,ForgotPassword, OtpVerify, ResetPassword, LoginStaff, LogoutAdmin}=require('../Controller/LoginController');
 const {CreateOrder,PaymentSuccess,FetchOrderByMobile, FetchOrderByRestaurant}=require('../Controller/OrderController');
 const { SuperAdminCount ,AdminCount} = require('../Controller/CountController');
@@ -91,6 +91,7 @@ router.post('/api/update-staff',
 
 // Menu Routes
 router.post('/api/add-table',AddTable);
+router.post('/api/update-table',UpdateTable);
 router.get('/api/fetch-table/:id',FetchAllTable);
 router.get('/api/fetch-tableby-staff/:id',FetchTableByStaff);
 router.post('/api/delete-table',DeleteTable);
